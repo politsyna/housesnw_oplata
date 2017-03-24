@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Node_oplata_entity_presave.
+ */
+function node_oplata_entity_presave(EntityInterface $entity) {
+  if (method_exists($entity, 'getType') && $entity->getType() == 'oplata') {
+    $title = format_date(time(), 'tolko_data');
+    $entity->title->setValue($title);
+  }
+}
