@@ -12,7 +12,18 @@ use Drupal\Core\Entity\EntityInterface;
  */
 function node_oplata_entity_presave(EntityInterface $entity) {
   if (method_exists($entity, 'getType') && $entity->getType() == 'oplata') {
-    $title = format_date(time(), 'tolko_data');
-    $entity->title->setValue($title);
+    if (is_object($entity->field_oplata_ref_smena->entity)) {
+      $date_raspilovki = $entity->field_oplata_ref_smena->entity->field_smena_date->value;
+      $date_raspilovki_2 = strtotime($date_raspilovki);
+      $title = format_date($date_raspilovki_2, 'tolko_data');
+      $entity->title->setValue($title);
+      $cost_sum = $entity->field_oplata_ref_smena->entity->field_smena_cost_sum->value;
+      $procent = $entity->field_oplata_procent->value;
+      $nachisleno = $cost_sum * $procent / 100;
+      $entity->field_oplata_nachisleno->setValue($nachisleno);
+    }
+    else {
+      $entity->setPublished(FALSE);
+    }
   }
 }
